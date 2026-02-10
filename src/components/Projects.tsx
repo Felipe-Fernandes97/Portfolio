@@ -106,9 +106,9 @@ export default function Projects() {
                   {project.media.map((item, mediaIndex) => (
                     <div key={mediaIndex} className="min-w-full flex-shrink-0 h-full flex items-center justify-center bg-black">
                       {item.type === 'image' ? (
-                        <img src={item.src} alt={project.title} className="max-w-full max-h-full w-auto h-auto object-contain block" />
+                        <img src={item.src} alt={project.title} loading="lazy" className="max-w-full max-h-full w-auto h-auto object-contain block" />
                       ) : (
-                        <video src={item.src} controls className="w-full h-full object-contain" />
+                        <video src={currentProject === index ? item.src : undefined} controls preload="none" className="w-full h-full object-contain" />
                       )}
                     </div>
                   ))}

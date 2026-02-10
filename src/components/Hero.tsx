@@ -1,6 +1,5 @@
 import { useRef } from 'react'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
-import ProfileCard from './ProfileCard'
 
 export default function Hero() {
   const ref1 = useRef<HTMLDivElement>(null)
@@ -28,20 +27,13 @@ export default function Hero() {
         </div>
 
         <div ref={ref3} className="relative w-full flex items-center justify-center scroll-animate fade-right">
-          <ProfileCard
-            name="Felipe Fernandes"
-            title="Full Stack & AI Engineer"
-            handle="felipefernandes"
-            status="Online"
-            contactText="Contact Me"
-            avatarUrl="/Faceimage/euteste.jpg"
-            showUserInfo={false}
-            enableTilt={true}
-            enableMobileTilt={false}
-            showBehindGlow={true}
-            behindGlowColor="rgba(125, 190, 255, 0.67)"
-            customInnerGradient="linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)"
-          />
+          <div className="relative" style={{ perspective: '800px', transformStyle: 'preserve-3d' }}>
+            <img
+              src="/Faceimage/euteste.jpg"
+              alt="Felipe Fernandes"
+              className="hero-image"
+            />
+          </div>
         </div>
       </div>
     </section>

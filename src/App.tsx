@@ -77,14 +77,11 @@ export default function App() {
           hueShift={0}
           noiseIntensity={0}
           scanlineIntensity={0}
-          speed={1.9}
-          scanlineFrequency={2.3}
-          warpAmount={1.3}
+          speed={0.5}
+          scanlineFrequency={0}
+          warpAmount={0}
         />
       </div>
-
-      {/* Dark overlay on top of Plasma */}
-      <div className="fixed inset-0 z-[1] bg-[rgba(5,5,8,0.5)] pointer-events-none" />
 
       {/* Header */}
       <Header visible={headerVisible} />
