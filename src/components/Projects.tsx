@@ -1,146 +1,240 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { projects } from '../data/projects'
+import CardSwap, { Card } from './CardSwap'
 
-export default function Projects() {
-  const [currentProject, setCurrentProject] = useState(0)
-  const [mediaIndexes, setMediaIndexes] = useState<number[]>(projects.map(() => 0))
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const carouselRef = useRef<HTMLDivElement>(null)
+function VideoModal({ project, onClose }: { project: typeof projects[0]; onClose: () => void }) {
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
-  useScrollAnimation(titleRef, 'fade-up')
-  useScrollAnimation(carouselRef, 'scale-in')
-
-  const goToProject = (index: number) => setCurrentProject(index)
-
-  const changeMedia = (projectIndex: number, direction: number) => {
-    const totalMedia = projects[projectIndex].media.length
-    if (totalMedia <= 1) return
-    setMediaIndexes(prev => {
-      const next = [...prev]
-      next[projectIndex] = (next[projectIndex] + direction + totalMedia) % totalMedia
-      return next
+  useEffect(() => {
+    // Animate in
+    requestAnimationFrame(() => {
+      if (overlayRef.current) overlayRef.current.style.opacity = '1'
+      if (contentRef.current) {
+        contentRef.current.style.opacity = '1'
+        contentRef.current.style.transform = 'scale(1) translateY(0)'
+      }
     })
-  }
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleEsc)
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+      document.body.style.overflow = ''
+    }
+  }, [onClose])
+
+  const media = project.media[0]
 
   return (
-    <section id="section-3" className="min-h-screen flex flex-col justify-center py-10">
-      <h2 ref={titleRef} className="text-center text-[2.5rem] text-white mb-20 scroll-animate fade-up">
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-10 transition-opacity duration-300"
+      style={{ opacity: 0, backdropFilter: 'blur(20px)', backgroundColor: 'rgba(0,0,0,0.75)' }}
+      onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
+    >
+      <div
+        ref={contentRef}
+        className="relative w-full max-w-[1000px] max-h-[85vh] rounded-2xl overflow-hidden bg-black/90 border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.8)] transition-all duration-400"
+        style={{ opacity: 0, transform: 'scale(0.9) translateY(20px)' }}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white/20 hover:scale-110"
+        >
+          <i className="fa-solid fa-xmark text-lg" />
+        </button>
+
+        {/* Video / Image */}
+        <div className="w-full aspect-video bg-black">
+          {media?.type === 'video' ? (
+            <video
+              src={media.src}
+              controls
+              autoPlay
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <img
+              src={media?.src}
+              alt={project.title}
+              className="w-full h-full object-contain"
+            />
+          )}
+        </div>
+
+        {/* Info bar */}
+        <div className="p-5 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-white/40 text-[0.75rem] uppercase tracking-[2px] font-bold m-0">
+              {project.category}
+            </p>
+            <h3 className="text-white text-[1.3rem] font-bold m-0 mt-1">
+              {project.title}
+            </h3>
+          </div>
+          <div className="flex gap-3">
+            {project.links.demo && project.links.demo !== '#' && (
+              <a
+                href={project.links.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 bg-white/[0.08] border border-white/[0.15] rounded-lg text-white no-underline text-[0.85rem] font-semibold inline-flex items-center gap-2 transition-all duration-200 hover:bg-white/[0.15]"
+              >
+                <i className="fa-solid fa-eye" /> Demo
+              </a>
+            )}
+            {project.links.code && project.links.code !== '#' && (
+              <a
+                href={project.links.code}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 bg-white/[0.08] border border-white/[0.15] rounded-lg text-white no-underline text-[0.85rem] font-semibold inline-flex items-center gap-2 transition-all duration-200 hover:bg-white/[0.15]"
+              >
+                <i className="fa-brands fa-github" /> Código
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function Projects() {
+  const [activeCard, setActiveCard] = useState(0)
+  const [modalProject, setModalProject] = useState<typeof projects[0] | null>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useScrollAnimation(titleRef, 'fade-up')
+  useScrollAnimation(containerRef, 'fade-up')
+
+  const project = projects[activeCard]
+
+  const handleCardClick = useCallback((idx: number) => {
+    setActiveCard(idx)
+    setModalProject(projects[idx])
+  }, [])
+
+  return (
+    <section id="section-3" className="min-h-screen flex flex-col justify-center py-10 px-5 md:px-10">
+      <h2 ref={titleRef} className="text-center text-[2rem] md:text-[2.5rem] text-white mb-10 md:mb-16 scroll-animate fade-up">
         Projetos
       </h2>
 
-      <div ref={carouselRef} className="relative w-full min-h-[600px] overflow-hidden pb-[100px] mb-10 scroll-animate scale-in">
-        <div
-          className="carousel-track"
-          style={{ transform: `translateX(-${currentProject * 100}%)` }}
-        >
-          {projects.map((project, index) => (
-            <div
-              key={index}
-              className="w-screen max-w-full flex-shrink-0 grid grid-cols-[1fr_1.5fr] gap-20 items-center px-20 box-border"
-            >
-              {/* Project Info */}
-              <div className="flex flex-col gap-6" style={{ animation: 'fadeInLeft 0.6s ease-out' }}>
-                <span className="text-white text-[0.85rem] uppercase tracking-[3px] font-bold">
-                  {project.category}
-                </span>
-                <h3 className="text-[2.5rem] text-white m-0 leading-[1.2]">
-                  {project.title}
-                </h3>
-                <p className="text-white leading-[1.8] text-[1.1rem]">
-                  {project.desc}
-                </p>
-                <div>
-                  <p className="text-white font-bold mb-2.5 text-[0.9rem] uppercase tracking-[1px]">
-                    Construído com:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.techs.map((tech, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 text-[0.8rem] font-semibold text-white/90 rounded-lg backdrop-blur-[12px] bg-white/[0.06] border border-white/[0.08] transition-all duration-300 hover:bg-white/[0.12] hover:border-white/[0.18]"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex gap-[15px] mt-2.5">
-                  {project.links.demo && project.links.demo !== '#' && (
-                    <a
-                      href={project.links.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-7 py-3.5 bg-transparent text-white no-underline transition-all duration-300 inline-flex items-center gap-2.5 text-[0.95rem] font-semibold hover:-translate-y-[3px]"
-                    >
-                      <i className="fa-solid fa-eye" /> Ver Demo
-                    </a>
-                  )}
-                  {project.links.code && project.links.code !== '#' && (
-                    <a
-                      href={project.links.code}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-7 py-3.5 bg-transparent text-white no-underline transition-all duration-300 inline-flex items-center gap-2.5 text-[0.95rem] font-semibold hover:-translate-y-[3px]"
-                    >
-                      <i className="fa-brands fa-github" /> Código
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Media Showcase */}
-              <div className="relative w-full h-[500px] overflow-hidden" style={{ animation: 'fadeInRight 0.6s ease-out' }}>
-                {project.media.length > 1 && (
-                  <button
-                    onClick={() => changeMedia(index, -1)}
-                    className="absolute left-[10px] top-1/2 -translate-y-1/2 bg-black/60 text-white border border-gray-500/30 w-[45px] h-[45px] rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 backdrop-blur-[10px] z-[5] hover:bg-[#9ca3af] hover:border-[#e5e7eb] hover:scale-115"
-                  >
-                    <i className="fa-solid fa-chevron-left" />
-                  </button>
-                )}
-                <div
-                  className="media-wrapper"
-                  style={{ transform: `translateX(-${mediaIndexes[index] * 100}%)` }}
+      <div ref={containerRef} className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-8 items-center max-w-[1500px] mx-auto w-full scroll-animate fade-up">
+        {/* Project Info - LEFT */}
+        <div className="flex flex-col gap-4 md:gap-5 order-2 lg:order-1">
+          <span className="text-white/60 text-[0.8rem] md:text-[0.85rem] uppercase tracking-[3px] font-bold">
+            {project.category}
+          </span>
+          <h3 className="text-[1.6rem] md:text-[2.2rem] text-white m-0 leading-[1.2] font-bold">
+            {project.title}
+          </h3>
+          <p className="text-white/70 leading-[1.8] text-[0.95rem] md:text-[1.05rem]">
+            {project.desc}
+          </p>
+          <div>
+            <p className="text-white/50 font-bold mb-2.5 text-[0.75rem] md:text-[0.8rem] uppercase tracking-[2px]">
+              Construído com:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {project.techs.map((tech, i) => (
+                <span
+                  key={i}
+                  className="px-2.5 md:px-3 py-1 md:py-1.5 text-[0.75rem] md:text-[0.8rem] font-semibold text-white/90 rounded-lg backdrop-blur-[12px] bg-white/[0.06] border border-white/[0.08] transition-all duration-300 hover:bg-white/[0.12] hover:border-white/[0.18]"
                 >
-                  {project.media.map((item, mediaIndex) => (
-                    <div key={mediaIndex} className="min-w-full flex-shrink-0 h-full flex items-center justify-center bg-black">
-                      {item.type === 'image' ? (
-                        <img src={item.src} alt={project.title} loading="lazy" className="max-w-full max-h-full w-auto h-auto object-contain block" />
-                      ) : (
-                        <video src={currentProject === index ? item.src : undefined} controls preload="none" className="w-full h-full object-contain" />
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {project.media.length > 1 && (
-                  <button
-                    onClick={() => changeMedia(index, 1)}
-                    className="absolute right-[10px] top-1/2 -translate-y-1/2 bg-black/60 text-white border border-gray-500/30 w-[45px] h-[45px] rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 backdrop-blur-[10px] z-[5] hover:bg-[#9ca3af] hover:border-[#e5e7eb] hover:scale-115"
-                  >
-                    <i className="fa-solid fa-chevron-right" />
-                  </button>
-                )}
-              </div>
+                  {tech}
+                </span>
+              ))}
             </div>
-          ))}
+          </div>
+          <div className="flex gap-3 mt-2 flex-wrap">
+            {project.links.demo && project.links.demo !== '#' && (
+              <a
+                href={project.links.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 md:px-6 py-2.5 md:py-3 bg-white/[0.08] border border-white/[0.12] rounded-lg text-white no-underline transition-all duration-300 inline-flex items-center gap-2.5 text-[0.85rem] md:text-[0.9rem] font-semibold hover:-translate-y-[2px] hover:bg-white/[0.14]"
+              >
+                <i className="fa-solid fa-eye" /> Ver Demo
+              </a>
+            )}
+            {project.links.code && project.links.code !== '#' && (
+              <a
+                href={project.links.code}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 md:px-6 py-2.5 md:py-3 bg-white/[0.08] border border-white/[0.12] rounded-lg text-white no-underline transition-all duration-300 inline-flex items-center gap-2.5 text-[0.85rem] md:text-[0.9rem] font-semibold hover:-translate-y-[2px] hover:bg-white/[0.14]"
+              >
+                <i className="fa-brands fa-github" /> Código
+              </a>
+            )}
+          </div>
         </div>
 
-        {/* Global Controls / Dots */}
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-3 z-[100] bg-black/95 px-6 py-[15px] rounded-[30px] backdrop-blur-[15px] border-2 border-gray-500/50 shadow-[0_10px_30px_rgba(0,0,0,0.226)]">
-          {projects.map((_, i) => (
-            <div
-              key={i}
-              onClick={() => goToProject(i)}
-              className={`h-3.5 rounded-full cursor-pointer transition-all duration-400 border-2 ${
-                currentProject === i
-                  ? 'bg-gray-200 w-10 border-gray-300 rounded-[7px]'
-                  : 'bg-gray-500/60 w-3.5 border-gray-500/80 hover:bg-gray-400/90 hover:scale-120 hover:border-gray-300'
-              }`}
-            />
-          ))}
+        {/* CardSwap - RIGHT */}
+        <div className="relative h-[400px] md:h-[550px] lg:h-[600px] overflow-visible order-1 lg:order-2">
+          <CardSwap
+            cardDistance={45}
+            verticalDistance={50}
+            delay={3000}
+            pauseOnHover={true}
+            width="min(750px, 58vw)"
+            height="min(420px, 32vw)"
+            skewAmount={4}
+            easing="elastic"
+            onCardClick={handleCardClick}
+            onSwap={(idx) => setActiveCard(idx)}
+          >
+            {projects.map((proj, i) => (
+              <Card key={i} customClass="overflow-hidden cursor-pointer">
+                {proj.media[0]?.type === 'video' ? (
+                  <video
+                    src={proj.media[0].src}
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-contain rounded-xl bg-black"
+                  />
+                ) : (
+                  <img
+                    src={proj.media[0]?.src}
+                    alt={proj.title}
+                    loading="lazy"
+                    className="w-full h-full object-contain rounded-xl bg-black"
+                  />
+                )}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 md:p-5 rounded-b-xl">
+                  <p className="text-white/50 text-[0.65rem] md:text-[0.7rem] uppercase tracking-[2px] font-bold m-0">
+                    {proj.category}
+                  </p>
+                  <h4 className="text-white text-[0.95rem] md:text-[1.1rem] font-bold m-0 mt-1">
+                    {proj.title}
+                  </h4>
+                </div>
+              </Card>
+            ))}
+          </CardSwap>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {modalProject && (
+        <VideoModal
+          project={modalProject}
+          onClose={() => setModalProject(null)}
+        />
+      )}
     </section>
   )
 }
