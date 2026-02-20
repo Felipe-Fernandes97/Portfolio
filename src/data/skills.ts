@@ -20,6 +20,6 @@ export const skills: Skill[] = [
   { name: "TailwindCSS", icon: "fa-solid fa-wind", level: 1 },
   { name: "Git/GitHub", icon: "fa-brands fa-github", level: 0.85 },
   { name: "Eng. Prompt", icon: "fa-solid fa-brain", level: 1 },
-  { name: "Docker", icon: "fa-brands fa-docker", level: 0.65 },
-  { name: "Linux", icon: "fa-brands fa-linux", level: 0.65 },
+  { name: "Docker", icon: "fa-brands fa-docker", level: 1 },
+  { name: "Linux", icon: "fa-brands fa-linux", level: 1 },
 ]

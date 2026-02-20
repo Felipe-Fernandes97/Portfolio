@@ -35,7 +35,7 @@ function VideoModal({ project, onClose }: { project: typeof projects[0]; onClose
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-10 transition-opacity duration-300"
-      style={{ opacity: 0, backdropFilter: 'blur(20px)', backgroundColor: 'rgba(0,0,0,0.75)' }}
+      style={{ opacity: 0, backgroundColor: 'rgba(0,0,0,0.85)' }}
       onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
     >
       <div
@@ -46,7 +46,7 @@ function VideoModal({ project, onClose }: { project: typeof projects[0]; onClose
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white/20 hover:scale-110"
+          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/70 border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white/20 hover:scale-110"
         >
           <i className="fa-solid fa-xmark text-lg" />
         </button>
@@ -124,7 +124,7 @@ export default function Projects() {
   }, [])
 
   return (
-    <section id="section-3" className="min-h-screen flex flex-col justify-center py-10 px-5 md:px-10">
+    <section id="section-3" className="min-h-screen flex flex-col justify-center pt-10 pb-48 px-5 md:px-10">
       <h2 ref={titleRef} className="text-center text-[2rem] md:text-[2.5rem] text-white mb-10 md:mb-16 scroll-animate fade-up">
         Projetos
       </h2>
@@ -189,8 +189,8 @@ export default function Projects() {
             pauseOnHover={true}
             width="min(750px, 58vw)"
             height="min(420px, 32vw)"
-            skewAmount={4}
-            easing="elastic"
+            skewAmount={0}
+            easing="linear"
             onCardClick={handleCardClick}
             onSwap={(idx) => setActiveCard(idx)}
           >
@@ -200,8 +200,6 @@ export default function Projects() {
                   <video
                     src={proj.media[0].src}
                     muted
-                    loop
-                    autoPlay
                     playsInline
                     preload="metadata"
                     className="w-full h-full object-contain rounded-xl bg-black"
