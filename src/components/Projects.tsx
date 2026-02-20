@@ -212,6 +212,16 @@ export default function Projects() {
                     className="w-full h-full object-contain rounded-xl bg-black"
                   />
                 )}
+                {proj.media[0]?.type === 'video' && (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 bg-black/30 rounded-xl">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-14 h-14 rounded-full bg-white/20 border border-white/40 flex items-center justify-center">
+                        <i className="fa-solid fa-play text-white text-xl ml-1" />
+                      </div>
+                      <span className="text-white text-[0.8rem] font-semibold tracking-wide">Ver completo</span>
+                    </div>
+                  </div>
+                )}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 md:p-5 rounded-b-xl">
                   <p className="text-white/50 text-[0.65rem] md:text-[0.7rem] uppercase tracking-[2px] font-bold m-0">
                     {proj.category}

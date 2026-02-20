@@ -1,21 +1,42 @@
 export interface MediaItem {
-  type: 'image' | 'video'
-  src: string
+  type: "image" | "video";
+  src: string;
 }
 
 export interface Project {
-  title: string
-  category: string
-  desc: string
-  techs: string[]
+  title: string;
+  category: string;
+  desc: string;
+  techs: string[];
   links: {
-    demo?: string
-    code?: string
-  }
-  media: MediaItem[]
+    demo?: string;
+    code?: string;
+  };
+  media: MediaItem[];
 }
 
 export const projects: Project[] = [
+  {
+    title: "CRM Full Stack",
+    category: "SaaS Platform",
+    desc: "Ainda em desenvolvimento. Sistema CRM completo para gestão de clientes, empresas e leads. Plataforma full stack focada em escalabilidade, organização e boas práticas de arquitetura, com autenticação robusta, controle de acesso por roles e dashboard gerencial.",
+    techs: [
+      "NestJS",
+      "TypeScript",
+      "Next.js",
+      "React",
+      "Tailwind CSS",
+      "TypeORM",
+      "PostgreSQL",
+      "Docker",
+      "JWT",
+    ],
+    links: {
+      
+      code: "https://github.com/Felipe-Fernandes97/CRM",
+    },
+    media: [{ type: "video", src: "/crm/crm.mp4" }],
+  },
   {
     title: "DashBoard Empresarial",
     category: "Utilizado na empresa onde atuo",
@@ -23,9 +44,9 @@ export const projects: Project[] = [
     techs: ["JavaScript", "Python", "Supabase", "Chart.js"],
     links: {
       demo: "https://copydesh.vercel.app",
-      code: "https://github.com/Felipe-Fernandes97/CopyPlanilhas"
+      code: "https://github.com/Felipe-Fernandes97/CopyPlanilhas",
     },
-    media: [{ type: "video", src: "/DashBoard/dashboard.mp4" }]
+    media: [{ type: "video", src: "/DashBoard/dashboard.mp4" }],
   },
   {
     title: "Talents-MultiOne",
@@ -34,31 +55,11 @@ export const projects: Project[] = [
     techs: ["NestJS", "TypeScript", "React", "Next.js", "Prisma", "PostgreSQL"],
     links: {
       demo: "https://talents-multi-one.vercel.app/dashboard",
-      code: "https://github.com/wallaceluis/Talents-MultiOne"
+      code: "https://github.com/wallaceluis/Talents-MultiOne",
     },
-    media: [{ type: "video", src: "/TalentsMulti/talents.mp4" }]
+    media: [{ type: "video", src: "/TalentsMulti/talents.mp4" }],
   },
-  {
-    title: "CRM Full Stack",
-    category: "SaaS Platform",
-    desc: "Ainda em desenvolvimento. Sistema CRM completo para gestão de clientes, empresas e leads. Plataforma full stack focada em escalabilidade, organização e boas práticas de arquitetura, com autenticação robusta, controle de acesso por roles e dashboard gerencial.",
-    techs: ["NestJS", "TypeScript", "Next.js", "React", "Tailwind CSS", "TypeORM", "PostgreSQL", "Docker", "JWT"],
-    links: {},
-    media: [{ type: "video", src: "/crm/crm.mp4" }]
-  },
-  {
-    title: "Saas MacDonald",
-    category: "E-commerce Application",
-    desc: "Ainda em desenvolvimento. Totem de autoatendimento para pedidos rápidos em restaurantes. Interface intuitiva desenvolvida para facilitar o processo de compra e reduzir filas.",
-    techs: ["TypeScript", "React", "TailWind CSS", "Prisma"],
-    links: {},
-    media: [
-      {
-        type: "image",
-        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect width='800' height='450' fill='%236b7280'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='32' fill='%23ffffff'%3EMacDonald Totem%3C/text%3E%3C/svg%3E"
-      }
-    ]
-  },
+
   {
     title: "Central Aviso",
     category: "Communication Platform",
@@ -66,9 +67,11 @@ export const projects: Project[] = [
     techs: ["JavaScript", "HTML/CSS", "3D Effects"],
     links: {
       demo: "https://numero-grupomulti.netlify.app/",
-      code: "https://github.com/Felipe-Fernandes97/Central-de-Aviso"
+      code: "https://github.com/Felipe-Fernandes97/Central-de-Aviso",
     },
-    media: [{ type: "video", src: "/centralDeAviso/Gravando 2026-01-20 154709.mp4" }]
+    media: [
+      { type: "video", src: "/centralDeAviso/Gravando 2026-01-20 154709.mp4" },
+    ],
   },
   {
     title: "Software-House",
@@ -77,9 +80,9 @@ export const projects: Project[] = [
     techs: ["HTML/CSS", "JavaScript"],
     links: {
       demo: "https://software-house-flax.vercel.app",
-      code: "https://github.com/Felipe-Fernandes97/Software-House"
+      code: "https://github.com/Felipe-Fernandes97/Software-House",
     },
-    media: [{ type: "video", src: "/soft/software-house.mp4" }]
+    media: [{ type: "video", src: "/soft/software-house.mp4" }],
   },
   {
     title: "Pacman Web",
@@ -88,8 +91,8 @@ export const projects: Project[] = [
     techs: ["JavaScript", "Canvas API", "Game Logic"],
     links: {
       demo: "https://pacman-three-iota.vercel.app",
-      code: "https://github.com/Felipe-Fernandes97/Pacman"
+      code: "https://github.com/Felipe-Fernandes97/Pacman",
     },
-    media: [{ type: "video", src: "/pacmen/pacmen.mp4" }]
-  }
-]
+    media: [{ type: "video", src: "/pacmen/pacmen.mp4" }],
+  },
+];
